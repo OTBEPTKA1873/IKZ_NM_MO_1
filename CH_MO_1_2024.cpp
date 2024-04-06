@@ -15,6 +15,36 @@ double J(double x, int choice) // Функция
     }
 }
 
+// Первая производная функции
+double dJ(double x, int choice)
+{
+    switch (choice)
+    {
+    case 1:
+        return 2 * x - cos(x);
+    case 2:
+        return cos(2 * x) - 2 * x * sin(2 * x);
+    }
+}
+
+// Вторая производная функции
+double ddJ(double x, int choice)
+{
+    switch (choice)
+    {
+    case 1:
+        return 2 + sin(x);
+    case 2:
+        return -4 * sin(2 * x) - 4 * x*cos(2 * x);
+    }
+}
+
+// Нахождение n-го исла Фибоначи
+double Fn(int n)
+{
+    return (pow((1 + sqrt(5)) / 2, n) - pow((1 - sqrt(5)) / 2, n)) / sqrt(5);
+}
+
 // Метод Половинного деления
 double HalfDivision(int Jchoice, int text, double A, double B, double EPS, int& iter)
 {
@@ -22,7 +52,7 @@ double HalfDivision(int Jchoice, int text, double A, double B, double EPS, int& 
     cout << "You using Half Division method!\n\n";
     if (text == 1)
     {
-        cout << "Iter=0:  x1=" << x1 << "  x2=" << x2 << endl;
+        cout << "Iter=0  x1=" << x1 << "  x2=" << x2 << endl;
     }
     do
     {
@@ -50,7 +80,7 @@ double GoldenRatio(int Jchoice, int text, double A, double B, double EPS, int& i
     cout << "You using Golden ratio method!\n\n";
     if (text == 1)
     {
-        cout << "Iter=0:  x1=" << x1 << "  x2=" << x2 << endl;
+        cout << "Iter=0  x1=" << x1 << "  x2=" << x2 << endl;
     }
     do
     {
@@ -73,12 +103,6 @@ double GoldenRatio(int Jchoice, int text, double A, double B, double EPS, int& i
     return (x1 + x2) / 2;
 }
 
-// Нахождение n-го исла Фибоначи
-double Fn(int n)
-{
-    return (pow((1 + sqrt(5)) / 2, n) - pow((1 - sqrt(5)) / 2, n)) / sqrt(5);
-}
-
 // Метод Фибоначи
 double Fibonachi(int Jchoice, int text, double A, double B, double EPS, int& iter)
 {
@@ -87,7 +111,7 @@ double Fibonachi(int Jchoice, int text, double A, double B, double EPS, int& ite
     cout << "You using Fibonachi method!\n\n";
     if (text == 1)
     {
-        cout << "Iter=0:  x1=" << an << "  x2=" << bn << endl;
+        cout << "Iter=0  x1=" << an << "  x2=" << bn << endl;
     }
     for (int i = 1; i < n; i++)
     {
@@ -115,18 +139,6 @@ double Fibonachi(int Jchoice, int text, double A, double B, double EPS, int& ite
         return xn - eps_fin;
     }
     return xn + eps_fin;
-}
-
-// Производные функции
-double dJ(double x, int choice)
-{
-    switch (choice)
-    {
-    case 1:
-        return 2 * x - cos(x);
-    case 2:
-        return cos(2 * x) - 2 * x * sin(2 * x);
-    }
 }
 
 // Нахождение константы Липищица
@@ -170,6 +182,10 @@ double Tangents(int Jchoice, int text, double A, double B, double EPS, int& iter
 {
     cout << "You using Tangents method!\n";
     double an = A, bn = B, xn = A;
+    if (text == 1)
+    {
+        cout << "\nIter=0:  x1=" << an << "  x2=" << bn;
+    }
     while (abs(dJ(xn, Jchoice)) > EPS && dJ(an, Jchoice) * dJ(bn, Jchoice) < 0)
     {
         iter++;
@@ -196,11 +212,26 @@ double Tangents(int Jchoice, int text, double A, double B, double EPS, int& iter
         return bn;
     }
 }
+
 // Метод Ньютона
-double Newton()
+double Newton(int Jchoice, int text, double A, double B, double EPS, int& iter)
 {
-    cout << "You using Newton method!\n\n";
-    return 1;
+    cout << "You using Newton method!\n";
+    double xn = (A + B) / 2;
+    if (text == 1)
+    {
+        cout << "\nIter=0  xk=" << xn;
+    }
+    while (abs(dJ(xn, Jchoice)) > EPS)
+    {
+        iter++;
+        xn -= dJ(xn, Jchoice) / ddJ(xn, Jchoice);
+        if (text == 1)
+        {
+            cout << "\nIter=" << iter << "   xk=" << xn;
+        }
+    }
+    return xn;
 }
 
 int main()
@@ -211,7 +242,7 @@ int main()
     cout << "1) x^2 + sin(x)\n2) x * cos(2x) + 1\n\nYour choice: ";
     cin >> Jchoice;
     cout << "\n---------------------------\n\n";
-    cout << "Choose method:\n1) Half division\n2) Golden Ratio\n3) Fibonachi\n4) Broken line\n5) Tangents \n\nYour choice: ";
+    cout << "Choose method:\n1) Half division\n2) Golden Ratio\n3) Fibonachi\n4) Broken line\n5) Tangents\n6) Newton\n\nYour choice: ";
     cin >> Mchoice;
     cout << "\n---------------------------\n\n";
     if (Mchoice != 4)
@@ -254,7 +285,7 @@ int main()
         Xmin = Tangents(Jchoice, text, a, b, eps, Iter);
         break;
     case 6:
-        Xmin = Newton();
+        Xmin = Newton(Jchoice, text, a, b, eps, Iter);
         break;
     }
     if (Mchoice != 4)
