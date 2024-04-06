@@ -144,7 +144,7 @@ double Fibonachi(int Jchoice, int text, double A, double B, double EPS, int& ite
 // Нахождение константы Липищица
 double L(int choice, double a, double b)
 {
-    double max = -pow(10, 10);
+    double max = -1;
     double N = abs((b - a) / 1000);
     for (double i = a; i <= b; i += N)
     {
@@ -171,6 +171,7 @@ void BrokenLine(int Jchoice, double x1, double p1, double& Lip, double EPS, doub
     {
         if (Jmin > J(x1, Jchoice))
         {
+            cout << "Xmin=" << Xmin << "   J=" << J(x1, Jchoice) << endl;
             Jmin = J(x1, Jchoice);
             Xmin = x1;
         }
