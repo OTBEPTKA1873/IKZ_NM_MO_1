@@ -3,6 +3,7 @@
 
 using namespace std;
 
+// Функции
 double J(double x, int choice) // Функция
 {
     switch (choice)
@@ -14,11 +15,11 @@ double J(double x, int choice) // Функция
     }
 }
 
-double HalfDivision(int Jchoice, int text, double A, double B, double EPS)
+// Метод Половинного деления
+double HalfDivision(int Jchoice, int text, double A, double B, double EPS, int& iter)
 {
     double x1 = A, x2 = B, delta = EPS / 2; // Динамическая граница метода деления пополам
     cout << "You using Half Division method!\n\n";
-    int iter = 0;
     if (text == 1)
     {
         cout << "Iter=0:  x1=" << x1 << "  x2=" << x2 << endl;
@@ -39,15 +40,14 @@ double HalfDivision(int Jchoice, int text, double A, double B, double EPS)
             cout << "Iter=" << iter << "  A=" << x1 << "  B=" << x2 << endl;
         }
     } while (abs(x1 - x2) > EPS);
-    cout << "\n---------------------------\n\nMinimum=" << (x1 + x2) / 2 << "  Jmin=" << J((x1 + x2) / 2, Jchoice) << "  iter=" << iter << endl;
-    return 1;
+    return (x1 + x2) / 2;
 }
 
-double GoldenRatio(int Jchoice, int text, double A, double B, double EPS)
+// Метод Золотого сечения
+double GoldenRatio(int Jchoice, int text, double A, double B, double EPS, int& iter)
 {
-    double x1 = A, x2 = B; // Динамическая граница метода деления пополам
+    double x1 = A, x2 = B;
     cout << "You using Golden ratio method!\n\n";
-    int iter = 0;
     if (text == 1)
     {
         cout << "Iter=0:  x1=" << x1 << "  x2=" << x2 << endl;
@@ -70,21 +70,21 @@ double GoldenRatio(int Jchoice, int text, double A, double B, double EPS)
             cout << "Iter=" << iter << "  A=" << x1 << "  B=" << x2 << endl;
         }
     } while (pow((sqrt(5) - 1) / 2, iter) * (x2 - x1) > EPS);
-    cout << "\n---------------------------\n\nMinimum=" << (x1 + x2) / 2 << "  Jmin=" << J((x1 + x2) / 2, Jchoice) << "  iter=" << iter << endl;
-    return 1;
+    return (x1 + x2) / 2;
 }
 
-double Fn(int n) // Нахождение числа Фибоначи через индукцию
+// Нахождение n-го исла Фибоначи
+double Fn(int n)
 {
     return (pow((1 + sqrt(5)) / 2, n) - pow((1 - sqrt(5)) / 2, n)) / sqrt(5);
 }
 
-double Fibonachi(int Jchoice, int text, double A, double B, double EPS)
+// Метод Фибоначи
+double Fibonachi(int Jchoice, int text, double A, double B, double EPS, int& iter)
 {
     double an = A, bn = B, x1, x2, xn;
     int n = (int)(log(EPS / ((bn - an) * sqrt(5))) / log(2 / (sqrt(5) + 1)));
     cout << "You using Fibonachi method!\n\n";
-    int iter = 0;
     if (text == 1)
     {
         cout << "Iter=0:  x1=" << an << "  x2=" << bn << endl;
@@ -112,15 +112,12 @@ double Fibonachi(int Jchoice, int text, double A, double B, double EPS)
     double eps_fin = (B - A) / (10 * Fn(n + 1));
     if (J(xn - eps_fin, Jchoice) <= J(xn + eps_fin, Jchoice))
     {
-        cout << "\n---------------------------\n\nMinimum=" << xn - eps_fin << "  Jmin=" << J(xn - eps_fin, Jchoice) << "  iter=" << iter << endl;
+        return xn - eps_fin;
     }
-    else
-    {
-        cout << "\n---------------------------\n\nMinimum=" << xn + eps_fin << "  Jmin=" << J(xn + eps_fin, Jchoice) << "  iter=" << iter << endl;
-    }
-    return 1;
+    return xn + eps_fin;
 }
 
+// Производные функции
 double dJ(double x, int choice)
 {
     switch (choice)
@@ -132,13 +129,14 @@ double dJ(double x, int choice)
     }
 }
 
+// Нахождение константы Липищица
 double L(int choice, double a, double b)
 {
     double max = -pow(10, 10);
     double N = abs((b - a) / 1000);
-    for (double i = a; i <= b; i+=N)
+    for (double i = a; i <= b; i += N)
     {
-        if (abs(dJ(i , choice)) > max)
+        if (abs(dJ(i, choice)) > max)
         {
             max = abs(dJ(i, choice));
         }
@@ -146,6 +144,7 @@ double L(int choice, double a, double b)
     return max;
 }
 
+// Метод Ломанных
 void BrokenLine(int Jchoice, double x1, double p1, double& Lip, double EPS, double& Xmin, double& Jmin, int& Branch)
 {
     double delta_n = 1. / (2 * Lip) * (J(x1, Jchoice) - p1);
@@ -166,14 +165,53 @@ void BrokenLine(int Jchoice, double x1, double p1, double& Lip, double EPS, doub
     }
 }
 
+// Метод касательных
+double Tangents(int Jchoice, int text, double A, double B, double EPS, int& iter)
+{
+    cout << "You using Tangents method!\n";
+    double an = A, bn = B, xn = A;
+    while (abs(dJ(xn, Jchoice)) > EPS && dJ(an, Jchoice) * dJ(bn, Jchoice) < 0)
+    {
+        iter++;
+        xn = (bn * dJ(bn, Jchoice) - an * dJ(an, Jchoice) + J(an, Jchoice) - J(bn, Jchoice)) / (dJ(bn, Jchoice) - dJ(an, Jchoice));
+        if (dJ(xn, Jchoice) >= 0)
+        {
+            bn = xn;
+        }
+        else
+        {
+            an = xn;
+        }
+        if (text == 1)
+        {
+            cout << "\nIter=" << iter << "  A=" << an << "  B=" << bn;
+        }
+    }
+    if (dJ(an, Jchoice) == 0 || (dJ(an, Jchoice) > 0 && dJ(bn, Jchoice) > 0))
+    {
+        return an;
+    }
+    else
+    {
+        return bn;
+    }
+}
+// Метод Ньютона
+double Newton()
+{
+    cout << "You using Newton method!\n\n";
+    return 1;
+}
+
 int main()
 {
-    int Jchoice, Mchoice, text;
+    int Jchoice, Mchoice, text, branch = 1, Iter = 0;
+    double a, b, eps, Xmin, Jmin, Lip, x1, p1;
     cout << "You using programm for find minimum J1 or J2 different various\n\nPlease choose function J\n\n";
     cout << "1) x^2 + sin(x)\n2) x * cos(2x) + 1\n\nYour choice: ";
     cin >> Jchoice;
     cout << "\n---------------------------\n\n";
-    cout << "Choose method:\n1) Half division\n2) Golden Ratio\n3) Fibonachi\n4) Broken line\n\nYour choice: ";
+    cout << "Choose method:\n1) Half division\n2) Golden Ratio\n3) Fibonachi\n4) Broken line\n5) Tangents \n\nYour choice: ";
     cin >> Mchoice;
     cout << "\n---------------------------\n\n";
     if (Mchoice != 4)
@@ -182,7 +220,6 @@ int main()
         cin >> text;
         cout << "\n---------------------------\n\n";
     }
-    double a, b, eps;
     cout << "Please enter left edge: ";
     cin >> a;
     cout << "\n---------------------------\n\n";
@@ -195,22 +232,34 @@ int main()
     switch (Mchoice)
     {
     case 1:
-        HalfDivision(Jchoice, text, a, b, eps);
+        Xmin = HalfDivision(Jchoice, text, a, b, eps, Iter);
         break;
     case 2:
-        GoldenRatio(Jchoice, text, a, b, eps);
+        Xmin = GoldenRatio(Jchoice, text, a, b, eps, Iter);
         break;
     case 3:
-        Fibonachi(Jchoice, text, a, b, eps);
+        Xmin = Fibonachi(Jchoice, text, a, b, eps, Iter);
         break;
     case 4:
-        double Xmin = a, Jmin = J(a, Jchoice);
-        double Lip = L(Jchoice, a, b);
-        double x1 = 1. / (2 * Lip) * (J(a, Jchoice) - J(b, Jchoice) + Lip * (a + b));
-        double p1 = 1. / 2 * (J(a, Jchoice) + J(b, Jchoice) + Lip * (a - b));
-        int branch = 1;
+        cout << "You using Broken line method!\n\n";
+        Xmin = a;
+        Jmin = J(a, Jchoice);
+        Lip = L(Jchoice, a, b);
+        x1 = 1. / (2 * Lip) * (J(a, Jchoice) - J(b, Jchoice) + Lip * (a + b));
+        p1 = 1. / 2 * (J(a, Jchoice) + J(b, Jchoice) + Lip * (a - b));
         BrokenLine(Jchoice, x1, p1, Lip, eps, Xmin, Jmin, branch);
         cout << "Minimum=" << Xmin << "  Jmin=" << Jmin << "  Total branch=" << branch << endl;
+        break;
+    case 5:
+        Xmin = Tangents(Jchoice, text, a, b, eps, Iter);
+        break;
+    case 6:
+        Xmin = Newton();
+        break;
+    }
+    if (Mchoice != 4)
+    {
+        cout << "\n---------------------------\n\nIter=" << Iter << "   Minimum = " << Xmin << "  Jmin = " << J(Xmin, Jchoice) << endl;
     }
     return 100;
 }
