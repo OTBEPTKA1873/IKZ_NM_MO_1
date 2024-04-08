@@ -35,7 +35,7 @@ double ddJ(double x, int choice)
     case 1:
         return 2 + sin(x);
     case 2:
-        return -4 * sin(2 * x) - 4 * x*cos(2 * x);
+        return -4 * sin(2 * x) - 4 * x * cos(2 * x);
     }
 }
 
@@ -69,7 +69,7 @@ double HalfDivision(int Jchoice, int text, double A, double B, double EPS, int& 
         {
             cout << "Iter=" << iter << "  A=" << x1 << "  B=" << x2 << endl;
         }
-    } while (abs(x1 - x2) > EPS);
+    } while ((x2 - x1 - delta) / pow(2, iter + 1) > EPS);
     return (x1 + x2) / 2;
 }
 
